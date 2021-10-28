@@ -7,12 +7,26 @@ const link="https://www.youtube.com/playlist?list=PLI_TwOrHUsI8MQNW0BvBAwwHYKgyi
         let pagesArr= await browserobj.pages();
         cpage=pagesArr[0];
         await cpage.goto(link);
+
         await cpage.waitForSelector("h1#title");
         const name = await cpage.evaluate(function(select){return document.querySelector(select).innerText}, "h1#title");
         console.log(name);
+
         await cpage.waitForSelector("#stats .ytd-playlist-sidebar-primary-info-renderer"); 
         let Alldata =await cpage.evaluate(getdata, "#stats .ytd-playlist-sidebar-primary-info-renderer");
         console.log( Alldata.noOfvideos, Alldata.noOfviews, Alldata.date );
+
+        let totalVideos = Alldata.noOfvideos.split(" ")[0];
+
+        await cpage.waitForSelector("#contents .style-scope .ytd-playlist-video-list-renderer");
+        let currVideos = await cpage.evaluate(getVideosLength,"#contents .style-scope .ytd-playlist-video-list-renderer" );
+        
+        while(totalVideos-currVideos>=10)
+        {
+            await cpage.evaluate(scrollCurrPage);
+
+        }
+
     } catch (error) {
         console.log(error);
     }
@@ -30,4 +44,14 @@ function getdata(select)
         noOfvideos, noOfviews, date
     }
 
+}
+
+function getVideosLength(select)
+{
+    let allVideoEleArr=document.querySelectorAll(select);
+    return allVideoEleArr.length;
+}
+
+function scrollCurrPage(){
+    window.scrollBy(0, window.innerHeight);
 }
