@@ -19,13 +19,18 @@ const link="https://www.youtube.com/playlist?list=PLI_TwOrHUsI8MQNW0BvBAwwHYKgyi
         let totalVideos = Alldata.noOfvideos.split(" ")[0];
 
         await cpage.waitForSelector("#contents .style-scope .ytd-playlist-video-list-renderer");
-        let currVideos = await cpage.evaluate(getVideosLength,"#contents .style-scope .ytd-playlist-video-list-renderer" );
+        let currVideos = await getCurrVideosLength(); 
         
-        while(totalVideos-currVideos>=10)
+        while(totalVideos-currVideos>=0)
         {
-            await cpage.evaluate(scrollCurrPage);
-
+          
+            await scrollCurrPage();
+            currVideos = await getCurrVideosLength();
+            
         }
+        
+        
+        
 
     } catch (error) {
         console.log(error);
@@ -46,12 +51,22 @@ function getdata(select)
 
 }
 
+async function getCurrVideosLength()
+{
+    let currVideos = await cpage.evaluate(getVideosLength,"#contents .style-scope .ytd-playlist-video-list-renderer" );
+    return currVideos;
+
+}
+
 function getVideosLength(select)
 {
     let allVideoEleArr=document.querySelectorAll(select);
     return allVideoEleArr.length;
 }
 
-function scrollCurrPage(){
-    window.scrollBy(0, window.innerHeight);
+async function scrollCurrPage(){
+    await cpage.evaluate(scrollCurrTab);
+    function scrollCurrTab(){
+        window.scrollBy(0, window.innerHeight);
+    }
 }
