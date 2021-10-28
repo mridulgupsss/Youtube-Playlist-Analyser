@@ -10,8 +10,8 @@ const link="https://www.youtube.com/playlist?list=PLI_TwOrHUsI8MQNW0BvBAwwHYKgyi
         await cpage.waitForSelector("h1#title");
         const name = await cpage.evaluate(function(select){return document.querySelector(select).innerText}, "h1#title");
         console.log(name);
-        await cpage.waitForSelector("div#stats"); 
-        let Alldata =await cpage.evaluate(getdata, "div#stats");
+        await cpage.waitForSelector("#stats .ytd-playlist-sidebar-primary-info-renderer"); 
+        let Alldata =await cpage.evaluate(getdata, "#stats .ytd-playlist-sidebar-primary-info-renderer");
         console.log( Alldata.noOfvideos, Alldata.noOfviews, Alldata.date );
     } catch (error) {
         console.log(error);
